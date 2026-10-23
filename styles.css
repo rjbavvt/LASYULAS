@@ -1,0 +1,1023 @@
+/* =========================================================================
+ * LAS YULAS · Menú Digital
+ * styles.css
+ *
+ * Variables CSS (--ly-*) se generan dinámicamente desde app.js a partir
+ * de la configuración en data.js. La hoja por defecto expone los valores
+ * de respaldo para que la página se vea correcta aunque JS no haya corrido.
+ * ========================================================================= */
+
+:root {
+  --ly-bg: #000000;
+  --ly-surface: #111111;
+  --ly-surface-alt: #1A1A1A;
+  --ly-text: #FFFFFF;
+  --ly-text-muted: #D0D0D0;
+  --ly-text-subtle: #9A9A9A;
+  --ly-accent: #E51B16;
+  --ly-accent-soft: rgba(229, 27, 22, 0.18);
+  --ly-success: #2ECC71;
+  --ly-warning: #F1C40F;
+  --ly-divider: rgba(255,255,255,0.08);
+
+  --ly-heading-font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
+  --ly-body-font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
+  --ly-heading-weight: 800;
+  --ly-heading-transform: uppercase;
+  --ly-base-size: 16px;
+
+  --ly-max-width: 1200px;
+  --ly-content-padding: 24px;
+  /* --ly-columns se asigna por defecto al valor de escritorio definido
+     por data.js (vía --ly-columns-desktop). Los media queries lo
+     sobrescriben para móvil/tablet. */
+  --ly-columns: var(--ly-columns-desktop, 2);
+  --ly-grid-gap: 28px;
+  --ly-card-gap: 18px;
+  --ly-image-ratio: 1 / 1;
+  --ly-image-radius: 18px;
+  --ly-card-radius: 22px;
+  --ly-banner-height: 44vh;
+  --ly-banner-height-mobile: 32vh;
+
+  --ly-shadow-card: 0 18px 40px rgba(0,0,0,0.45);
+  --ly-shadow-banner: 0 20px 50px rgba(0,0,0,0.55);
+  --ly-transition: 200ms cubic-bezier(.4,.0,.2,1);
+}
+
+/* --------- Reset --------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--ly-bg);
+  color: var(--ly-text);
+  font-family: var(--ly-body-font);
+  font-size: var(--ly-base-size);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; }
+
+/* --------- App container --------- */
+.app {
+  min-height: 100vh;
+  width: 100%;
+  max-width: var(--ly-max-width);
+  margin: 0 auto;
+  padding: var(--ly-content-padding);
+}
+
+.app-loading {
+  padding: 80px 0;
+  text-align: center;
+  color: var(--ly-text-muted);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+/* --------- Header / Logo --------- */
+.ly-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 0 28px;
+  gap: 10px;
+}
+
+.ly-header__logo {
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.6));
+  transition: transform var(--ly-transition);
+}
+.ly-header__logo:hover { transform: scale(1.04); }
+
+.ly-header__tagline {
+  color: var(--ly-text-subtle);
+  letter-spacing: .25em;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* --------- Banner --------- */
+.ly-banner {
+  position: relative;
+  width: 100%;
+  height: var(--ly-banner-height);
+  min-height: 220px;
+  border-radius: var(--ly-card-radius);
+  overflow: hidden;
+  margin: 0 0 36px;
+  box-shadow: var(--ly-shadow-banner);
+  isolation: isolate;
+}
+
+.ly-banner__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 1;
+}
+
+.ly-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.65) 100%);
+  z-index: 2;
+}
+
+.ly-banner__content {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 28px 32px;
+  color: #fff;
+}
+
+.ly-banner__title {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .04em;
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  margin: 0;
+  line-height: 1;
+  text-shadow: 0 4px 18px rgba(0,0,0,0.6);
+}
+
+.ly-banner__subtitle {
+  margin: 8px 0 0;
+  font-size: clamp(.85rem, 2vw, 1rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+
+/* --------- Categoría --------- */
+.ly-category {
+  margin-bottom: 56px;
+  scroll-margin-top: 24px;
+}
+
+.ly-category__header {
+  margin-bottom: 24px;
+}
+
+.ly-category__title {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .05em;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin: 0 0 6px;
+  color: var(--ly-text);
+  position: relative;
+  display: inline-block;
+}
+
+.ly-category__title::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  background: var(--ly-accent);
+  margin-top: 8px;
+  border-radius: 4px;
+}
+
+.ly-category__description {
+  color: var(--ly-text-muted);
+  max-width: 60ch;
+  margin: 8px 0 0;
+  font-size: .95rem;
+}
+
+/* --------- Grid de productos --------- */
+.ly-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--ly-columns), 1fr);
+  gap: var(--ly-grid-gap);
+}
+
+/* --------- Tarjeta de producto --------- */
+.ly-card {
+  background: var(--ly-surface);
+  border: 1px solid var(--ly-divider);
+  border-radius: var(--ly-card-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--ly-shadow-card);
+  transition: transform var(--ly-transition), box-shadow var(--ly-transition), border-color var(--ly-transition);
+  position: relative;
+}
+
+.ly-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.55);
+  border-color: rgba(229,27,22,0.5);
+}
+
+.ly-card--unavailable {
+  opacity: .65;
+  filter: grayscale(.25);
+}
+
+.ly-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--ly-image-ratio);
+  background: var(--ly-surface-alt);
+  overflow: hidden;
+}
+
+.ly-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 400ms ease;
+}
+.ly-card:hover .ly-card__img { transform: scale(1.05); }
+
+.ly-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--ly-accent);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  box-shadow: 0 6px 14px rgba(229,27,22,0.5);
+  z-index: 2;
+}
+
+.ly-card__availability {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.7);
+  color: var(--ly-warning);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  z-index: 2;
+  border: 1px solid rgba(241,196,15,0.5);
+}
+
+.ly-card__body {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ly-card-gap);
+  flex: 1;
+}
+
+.ly-card__name {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .04em;
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  margin: 0;
+  color: var(--ly-text);
+}
+
+.ly-card__description {
+  color: var(--ly-text-muted);
+  font-size: .92rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.ly-card__footer {
+  margin-top: auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid var(--ly-divider);
+}
+
+.ly-card__price-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ly-card__price {
+  font-family: var(--ly-heading-font);
+  font-size: clamp(1.4rem, 3vw, 1.8rem);
+  color: var(--ly-accent);
+  letter-spacing: .02em;
+  font-weight: 700;
+}
+
+.ly-card__price--empty {
+  color: var(--ly-text-muted);
+  font-family: var(--ly-body-font);
+  font-size: .95rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+  text-transform: none;
+  font-style: italic;
+}
+
+.ly-card__price-old {
+  font-size: .85rem;
+  color: var(--ly-text-subtle);
+  text-decoration: line-through;
+}
+
+.ly-card__variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ly-card__variant {
+  background: var(--ly-accent-soft);
+  color: var(--ly-text);
+  border: 1px solid rgba(229,27,22,0.45);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: .78rem;
+  letter-spacing: .04em;
+}
+
+/* --------- Variante (sin imagen) --------- */
+.ly-card--plain .ly-card__media { display: none; }
+
+/* --------- Pie de página --------- */
+.ly-footer {
+  margin-top: 80px;
+  padding: 40px 0 60px;
+  border-top: 1px solid var(--ly-divider);
+  text-align: center;
+  color: var(--ly-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ly-footer__brand {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .12em;
+  font-size: 1.1rem;
+  color: var(--ly-text);
+}
+
+.ly-footer__contact {
+  font-size: .85rem;
+  color: var(--ly-text-subtle);
+}
+
+.ly-footer__social {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.ly-footer__social a {
+  color: var(--ly-text-muted);
+  text-decoration: none;
+  font-size: .85rem;
+  border: 1px solid var(--ly-divider);
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: all var(--ly-transition);
+}
+.ly-footer__social a:hover {
+  background: var(--ly-accent);
+  border-color: var(--ly-accent);
+  color: #fff;
+}
+
+.ly-footer__copyright {
+  font-size: .75rem;
+  color: var(--ly-text-subtle);
+  margin-top: 14px;
+  letter-spacing: .04em;
+}
+
+/* --------- Botón de edición --------- */
+.edit-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--ly-accent);
+  color: #fff;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 24px rgba(229,27,22,0.5);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform var(--ly-transition);
+}
+.edit-toggle:hover { transform: translateY(-2px) scale(1.03); }
+
+body.is-editing { overflow: hidden; }
+
+/* ============== EDITOR MODAL ============== */
+.editor {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+}
+.editor.is-open { display: block; }
+
+/* ============== AUTH MODAL ============== */
+.auth {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.auth.is-open { display: flex; }
+
+.auth__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+  animation: lyFade .2s ease;
+}
+
+.auth__panel {
+  position: relative;
+  width: min(420px, 100%);
+  background: #161616;
+  border: 1px solid var(--ly-divider);
+  border-radius: 16px;
+  padding: 26px 24px 18px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+  animation: lySlideUp .25s ease;
+}
+
+@keyframes lySlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.auth__header { text-align: center; margin-bottom: 18px; }
+.auth__title {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .08em;
+  font-size: 1.2rem;
+  margin: 0 0 6px;
+}
+.auth__subtitle {
+  font-size: .85rem;
+  color: var(--ly-text-subtle);
+  margin: 0;
+}
+.auth__form { display: flex; flex-direction: column; gap: 12px; }
+.auth__field { display: flex; flex-direction: column; gap: 6px; }
+.auth__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ly-text-muted);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.auth__input {
+  background: #0d0d0d;
+  color: var(--ly-text);
+  border: 1px solid var(--ly-divider);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color var(--ly-transition);
+}
+.auth__input:focus {
+  outline: none;
+  border-color: var(--ly-accent);
+  box-shadow: 0 0 0 3px var(--ly-accent-soft);
+}
+.auth__error {
+  margin: 4px 0 0;
+  padding: 8px 12px;
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.4);
+  color: #ff8080;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.auth__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.auth__footer { margin-top: 16px; text-align: center; }
+.auth__note {
+  font-size: 11px;
+  color: var(--ly-text-subtle);
+  letter-spacing: .02em;
+}
+
+.editor__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  animation: lyFade .2s ease;
+}
+
+.editor__panel {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: min(640px, 96vw);
+  background: #161616;
+  border-left: 1px solid var(--ly-divider);
+  display: flex;
+  flex-direction: column;
+  animation: lySlideIn .25s ease;
+  overflow: hidden;
+}
+
+.editor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--ly-divider);
+  background: #111;
+}
+.editor__title {
+  font-family: var(--ly-heading-font);
+  font-weight: var(--ly-heading-weight);
+  text-transform: var(--ly-heading-transform);
+  letter-spacing: .08em;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.editor__actions { display: flex; gap: 8px; }
+
+.editor__btn {
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--ly-transition);
+}
+.editor__btn--ghost {
+  background: transparent;
+  color: var(--ly-text-muted);
+  border: 1px solid var(--ly-divider);
+}
+.editor__btn--ghost:hover { background: #222; color: var(--ly-text); }
+.editor__btn--primary {
+  background: var(--ly-accent);
+  color: #fff;
+}
+.editor__btn--primary:hover { filter: brightness(1.1); }
+.editor__btn--danger {
+  background: #2a1010;
+  color: #ff6b6b;
+  border: 1px solid rgba(255,107,107,0.4);
+}
+.editor__btn--danger:hover { background: #3a1414; }
+
+.editor__tabs {
+  display: flex;
+  gap: 4px;
+  padding: 10px 22px 0;
+  border-bottom: 1px solid var(--ly-divider);
+  background: #111;
+  overflow-x: auto;
+}
+.editor__tab {
+  background: transparent;
+  border: none;
+  color: var(--ly-text-subtle);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.editor__tab.is-active {
+  color: var(--ly-text);
+  border-bottom-color: var(--ly-accent);
+}
+
+.editor__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+}
+
+.editor__section { display: none; }
+.editor__section.is-active { display: block; }
+
+.editor__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.editor__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ly-text-muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.editor__input,
+.editor__textarea,
+.editor__select {
+  background: #0d0d0d;
+  color: var(--ly-text);
+  border: 1px solid var(--ly-divider);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color var(--ly-transition);
+}
+.editor__input:focus,
+.editor__textarea:focus,
+.editor__select:focus {
+  outline: none;
+  border-color: var(--ly-accent);
+}
+.editor__textarea { resize: vertical; min-height: 80px; }
+.editor__input[type="color"] {
+  height: 44px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.editor__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.editor__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.editor__item {
+  background: #0d0d0d;
+  border: 1px solid var(--ly-divider);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editor__item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor__item-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ly-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor__item-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.editor__mini-btn {
+  background: #1c1c1c;
+  border: 1px solid var(--ly-divider);
+  color: var(--ly-text-muted);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--ly-transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.editor__mini-btn:hover { background: #2a2a2a; color: var(--ly-text); }
+.editor__mini-btn--up:hover { color: var(--ly-success); }
+.editor__mini-btn--down:hover { color: var(--ly-success); }
+.editor__mini-btn--danger:hover { color: #ff6b6b; border-color: rgba(255,107,107,0.4); }
+.editor__mini-btn--dup:hover { color: var(--ly-accent); }
+
+.editor__item-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.editor__item-body .editor__field { margin: 0; }
+
+.editor__image-field {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.editor__image-field .editor__input { flex: 1; }
+.editor__image-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--ly-divider);
+  background: #222;
+  flex-shrink: 0;
+}
+.editor__file-btn {
+  background: #2a2a2a;
+  border: 1px solid var(--ly-divider);
+  color: var(--ly-text-muted);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--ly-transition);
+}
+.editor__file-btn:hover { background: #333; color: var(--ly-text); }
+
+.editor__footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--ly-divider);
+  background: #111;
+}
+.editor__note {
+  font-size: 11px;
+  color: var(--ly-text-subtle);
+  line-height: 1.5;
+  display: block;
+}
+
+.editor__section-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.editor__checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.editor__checkbox-field input { width: 18px; height: 18px; accent-color: var(--ly-accent); cursor: pointer; }
+
+/* --------- Toast --------- */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ly-surface-alt);
+  color: var(--ly-text);
+  padding: 12px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  z-index: 200;
+  border: 1px solid var(--ly-divider);
+  animation: lyFade .25s ease;
+}
+.toast--success { border-color: var(--ly-success); }
+.toast--error { border-color: #ff6b6b; }
+.toast--info { border-color: var(--ly-accent); }
+
+/* --------- Toast flotante de Deshacer --------- */
+.undo-toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ly-surface);
+  color: var(--ly-text);
+  padding: 14px 16px 16px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+  border: 1px solid var(--ly-divider);
+  z-index: 250;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(440px, calc(100vw - 32px));
+  opacity: 0;
+  transition: transform 250ms cubic-bezier(.4,.0,.2,1), opacity 250ms ease;
+  overflow: hidden;
+}
+.undo-toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.undo-toast__msg {
+  font-size: 14px;
+  flex: 1;
+  color: var(--ly-text-muted);
+}
+.undo-toast__btn {
+  background: var(--ly-accent);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: filter 200ms ease;
+  white-space: nowrap;
+}
+.undo-toast__btn:hover { filter: brightness(1.1); }
+.undo-toast__dismiss {
+  background: transparent;
+  border: none;
+  color: var(--ly-text-subtle);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 200ms ease;
+}
+.undo-toast__dismiss:hover { color: var(--ly-text); }
+.undo-toast__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--ly-accent);
+  border-radius: 0 0 14px 14px;
+}
+
+/* --------- Animaciones --------- */
+@keyframes lyFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lySlideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ============== RESPONSIVE ============== */
+
+/* Tablet y móvil grande (601px – 900px): 2 columnas de productos */
+@media (max-width: 900px) {
+  :root {
+    --ly-banner-height: var(--ly-banner-height-mobile);
+    --ly-columns: 2;
+    --ly-grid-gap: 16px;
+  }
+  .ly-card__body { padding: 14px 14px 16px; }
+  .ly-card__name { font-size: clamp(1.05rem, 3.5vw, 1.3rem); }
+  .ly-card__price { font-size: clamp(1.15rem, 3.5vw, 1.5rem); }
+  .ly-card__description { font-size: 0.82rem; line-height: 1.4; }
+  /* El editor mantiene 1 columna para que los campos no se aplasten */
+  .editor__row { grid-template-columns: 1fr; }
+  .editor__item-body { grid-template-columns: 1fr; }
+}
+
+/* Móvil pequeño (≤600px): 1 sola columna para legibilidad.
+   IMPORTANTE: debe ir DESPUÉS del breakpoint de 900px en el documento
+   para que su --ly-columns prevalezca a igual especificidad. */
+@media (max-width: 600px) {
+  :root {
+    --ly-columns: 1;
+    --ly-grid-gap: 18px;
+  }
+  .app { padding: 16px; }
+  .ly-banner__content { padding: 20px 18px; }
+  .ly-card__body { padding: 14px 16px 18px; }
+  .ly-footer { margin-top: 60px; padding: 30px 0 40px; }
+  .editor__panel { width: 100vw; }
+  .edit-toggle { bottom: 14px; right: 14px; padding: 10px 14px; font-size: 12px; }
+}
+
+/* Pantallas amplias: limitar columnas */
+@media (min-width: 1400px) {
+  :root { --ly-columns: 2; }
+  .app { padding: 32px; }
+}
+
+/* Reducción de movimiento */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ===== Alineación centrada ===== */
+.ly-category__header,
+.ly-category__title,
+.ly-category__description { text-align: center; }
+.ly-category__title::after { margin-left: auto; margin-right: auto; }
+
+.ly-card__body { text-align: center; }
+.ly-card__footer { justify-content: center; }
+.ly-card__price-wrap { justify-content: center; }
+
+.ly-banner__content { align-items: center; text-align: center; }
+
+.ly-footer { text-align: center; }
+.ly-footer__social { justify-content: center; }
+
+/* ===== Banner de categoría con título sobrepuesto ===== */
+.ly-category__hero {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  border-radius: var(--ly-card-radius);
+  overflow: hidden;
+  margin-bottom: 28px;
+  box-shadow: var(--ly-shadow-banner);
+}
+.ly-category__hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ly-category__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.75) 100%);
+}
+.ly-category__hero-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 24px 28px;
+  text-align: center;
+  color: #fff;
+}
+.ly-category__hero .ly-category__title {
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 4px 18px rgba(0,0,0,0.7);
+}
+.ly-category__hero .ly-category__title::after {
+  margin: 8px auto 0;
+}
+.ly-category__hero .ly-category__description {
+  color: rgba(255,255,255,0.9);
+  margin: 8px 0 0;
+}
+@media (max-width: 600px) {
+  .ly-category__hero { height: 200px; }
+  .ly-category__hero-content { padding: 18px; }
+}
