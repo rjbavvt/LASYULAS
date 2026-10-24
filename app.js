@@ -611,38 +611,43 @@ const authModal = {
   onSubmit: null
 };
 
+
 function openAuthModal(mode, onSubmit) {
   authModal.el = $("#authModal");
   authModal.mode = mode;
   authModal.onSubmit = onSubmit;
 
-  // Configurar campos según modo
+  // Mostrar solo los campos del modo activo y deshabilitar los ocultos.
   $$("[data-auth-mode]").forEach((f) => {
     f.hidden = f.dataset.authMode !== mode;
+
+    f.querySelectorAll("input, select, textarea").forEach((control) => {
+      control.disabled = f.hidden;
+    });
   });
 
-  // Limpiar
+  // Limpiar campos.
   $("#authPassword").value = "";
-  if ($("#authEmail")) $("#authEmail").value = "";
-  const emailField = $("#authEmailField");
-  if (emailField) emailField.hidden = !(mode === "login" && cloudIsConfigured());
   $("#authNewPassword").value = "";
   $("#authNewPasswordConfirm").value = "";
+
   const err = $("#authError");
   err.hidden = true;
   err.textContent = "";
 
-  // Títulos
+  // Configurar títulos y botón.
   const title = $("#authTitle");
   const subtitle = $(".auth__subtitle");
   const submitBtn = $("#authSubmit");
+
   if (mode === "create") {
     title.textContent = "Crear contraseña";
-    subtitle.textContent = "Aún no hay contraseña definida. Crea una para proteger el editor.";
+    subtitle.textContent =
+      "Aún no hay contraseña definida. Crea una para proteger el editor.";
     submitBtn.textContent = "Crear y entrar";
   } else {
     title.textContent = "Acceso restringido";
-    subtitle.textContent = cloudIsConfigured() ? "Accede con tu correo y contraseña de administrador" : "Introduce la contraseña para editar el menú";
+    subtitle.textContent = "Introduce la contraseña para editar el menú";
     submitBtn.textContent = "Entrar";
   }
 
@@ -650,9 +655,11 @@ function openAuthModal(mode, onSubmit) {
   authModal.el.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-editing");
 
-  // Foco
+  // Enfocar un campo visible.
   setTimeout(() => {
-    const focusTarget = mode === "create" ? $("#authNewPassword") : (cloudIsConfigured() ? $("#authEmail") : $("#authPassword"));
+    const focusTarget =
+      mode === "create" ? $("#authNewPassword") : $("#authPassword");
+
     focusTarget?.focus();
   }, 50);
 }
@@ -779,10 +786,30 @@ function openChangePasswordDialog() {
   subtitle.textContent = "Introduce la contraseña actual y la nueva.";
   submitBtn.textContent = "Actualizar";
 
-  // Mostrar login (actual) + create (nueva + confirmación)
-  $$("[data-auth-mode]").forEach((f) => (f.hidden = false));
-  const loginLabel = document.querySelector('[for="authPassword"]');
-  if (loginLabel) loginLabel.textContent = "Contraseña actual";
+// Mostrar los campos de contraseña actual, nueva y confirmación.
+$$("[data-auth-mode]").forEach((f) => {
+  f.hidden = false;
+
+  f.querySelectorAll("input, select, textarea").forEach((control) => {
+    control.disabled = false;
+  });
+});
+
+const emailField = $("#authEmailField");
+
+if (emailField) {
+  emailField.hidden = true;
+
+  emailField.querySelectorAll("input, select, textarea").forEach((control) => {
+    control.disabled = true;
+  });
+}
+
+const loginLabel = document.querySelector('[for="authPassword"]');
+
+if (loginLabel) {
+  loginLabel.textContent = "Contraseña actual";
+}
 
   // Limpiar
   $("#authPassword").value = "";
