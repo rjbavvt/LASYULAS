@@ -158,14 +158,17 @@ export const menuConfig = {
   /* -------- Pie de página -------- */
   footer: {
     text: "LAS YULAS · Sabor que enamora",
-    copyright: "© 2026 Las Yulas. Todos los derechos reservados.",
+    copyright: "© 2026 Las Yulas · Menú digital implementado por Jorge Eliecer Ribaut Villadiego",
     social: [
       { label: "Instagram", url: "https://instagram.com/lasyulas", visible: true },
       { label: "WhatsApp", url: "https://wa.me/573000000000", visible: true },
       { label: "Ubicación", url: "https://maps.google.com/?q=Las+Yulas", visible: false }
     ],
     contactPhone: "+57 300 000 0000",
-    contactAddress: "Calle 100 #50-25, Bogotá, Colombia"
+    contactAddress: "Calle 100 #50-25, Bogotá, Colombia",
+    supportEmail: "jorg3ribavt@gmail.com",
+    developerName: "Jorge Eliecer Ribaut Villadiego",
+    developerInstagram: "rjbavvt"
   },
 
   /* -------- Tombstones --------
