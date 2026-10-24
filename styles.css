@@ -1021,3 +1021,44 @@ body.is-editing { overflow: hidden; }
   .ly-category__hero { height: 200px; }
   .ly-category__hero-content { padding: 18px; }
 }
+
+/* Mejoras táctiles y de distribución para el editor en tablet y móvil */
+.editor__btn, .editor__tab, .editor__item-actions button, .editor__file-btn {
+  min-height: 40px;
+  touch-action: manipulation;
+}
+.editor__input, .editor__textarea, .editor__select, .auth__input {
+  max-width: 100%;
+  min-width: 0;
+}
+.editor__image-field { min-width: 0; flex-wrap: wrap; }
+.editor__image-thumb { max-width: min(100%, 180px); }
+.editor__item, .editor__item-body, .editor__row { min-width: 0; }
+
+@media (max-width: 600px) {
+  .auth__panel { width: calc(100vw - 28px); max-width: 440px; padding: 22px 18px; }
+  .editor__header { gap: 8px; padding: 12px 14px; align-items: flex-start; }
+  .editor__title { font-size: .95rem; padding-top: 8px; }
+  .editor__actions { gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .editor__actions .editor__btn { padding: 9px 10px; font-size: 12px; }
+  .editor__tabs { padding: 8px 10px 0; gap: 2px; scrollbar-width: thin; }
+  .editor__tab { padding: 12px 11px; font-size: 12px; }
+  .editor__body { padding: 16px 14px calc(24px + env(safe-area-inset-bottom)); }
+  .editor__footer { padding-bottom: calc(12px + env(safe-area-inset-bottom)); }
+  .editor__item-head { gap: 8px; align-items: flex-start; }
+  .editor__item-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .editor__item-actions button { padding: 8px 10px; }
+  .editor__image-field { gap: 10px; }
+  .editor__image-field .editor__input { flex-basis: 100%; width: 100%; }
+  .editor__image-field .editor__file-btn { flex: 1; }
+  .auth__actions { flex-wrap: wrap; }
+  .auth__actions .editor__btn { flex: 1; min-height: 44px; }
+  .edit-toggle { min-height: 44px; padding: 12px 16px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .editor__btn, .editor__tab, .editor__file-btn, .edit-toggle { min-height: 44px; }
+}
+
+/* Respeta el atributo HTML hidden aunque un componente tenga display propio. */
+[hidden] { display: none !important; }
