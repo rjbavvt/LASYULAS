@@ -37,6 +37,11 @@
   <div id="authModal" class="auth" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="auth__backdrop" data-auth-close></div>
     <div class="auth__panel">
+      <button type="button" class="auth__close" data-auth-close aria-label="Cerrar" title="Cerrar">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </button>
       <header class="auth__header">
         <h2 id="authTitle" class="auth__title">Acceso restringido</h2>
         <p class="auth__subtitle">Introduce la contraseña para editar el menú</p>
