@@ -41,6 +41,10 @@
         <p class="auth__subtitle">Introduce la contraseña para editar el menú</p>
       </header>
       <form id="authForm" class="auth__form" autocomplete="off">
+        <div class="auth__field" data-auth-mode="login" id="authEmailField" hidden>
+          <label class="auth__label" for="authEmail">Correo del administrador</label>
+          <input id="authEmail" class="auth__input" type="email" autocomplete="username" placeholder="admin@tudominio.com" />
+        </div>
         <div class="auth__field" data-auth-mode="login">
           <label class="auth__label" for="authPassword">Contraseña</label>
           <input id="authPassword" class="auth__input" type="password" required autocomplete="current-password" placeholder="••••••••" />
@@ -72,6 +76,7 @@
       <header class="editor__header">
         <h2 id="editorTitle" class="editor__title">Editar menú</h2>
         <div class="editor__actions">
+          <button type="button" class="editor__btn editor__btn--ghost" id="editorLogout" hidden>Cerrar sesión</button>
           <button type="button" class="editor__btn editor__btn--ghost" data-editor-close>Cerrar</button>
           <button type="button" class="editor__btn editor__btn--primary" id="editorSave">Guardar</button>
         </div>
@@ -106,8 +111,7 @@
 
       <footer class="editor__footer">
         <span class="editor__note">
-          Los cambios se guardan localmente en este navegador.
-          Publicar para otros dispositivos requiere backend o despliegue.
+          Los cambios se guardan automáticamente. Con la sincronización en la nube configurada, los cambios se comparten entre dispositivos.
         </span>
       </footer>
     </div>
