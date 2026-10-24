@@ -51,21 +51,83 @@ async function validSession() {
     return next;
   } catch { writeSession(null); return null; }
 }
+
+
 export async function cloudSignIn(email, password) {
   const session = await api('/auth/v1/token?grant_type=password', {
-    method: 'POST', body: JSON.stringify({ email: email.trim(), password })
+    method: 'POST',
+    body: JSON.stringify({ email: email.trim(), password })
   });
-  const saved = { ...session, expires_at: Date.now() + (session.expires_in || 3600) * 1000 };
+
+  const saved = {
+    ...session,
+    expires_at: Date.now() + (session.expires_in || 3600) * 1000
+  };
+
   writeSession(saved);
+
   try {
-    const memberships = await api(`/rest/v1/menu_admins?user_id=eq.${encodeURIComponent(session.user.id)}&select=user_id&limit=1`, {}, session.access_token);
-    if (!Array.isArray(memberships) || memberships.length === 0) throw new Error('No autorizado');
+    const memberships = await api(
+      `/rest/v1/menu_admins?user_id=eq.${encodeURIComponent(session.user.id)}&select=user_id&limit=1`,
+      {},
+      session.access_token
+    );
+
+    if (!Array.isArray(memberships) || memberships.length === 0) {
+      throw new Error('No autorizado');
+    }
   } catch (e) {
     writeSession(null);
-    throw new Error('La cuenta inició sesión, pero no está autorizada como administradora de LAS YULAS.');
+    throw new Error(
+      'La cuenta inició sesión, pero no está autorizada como administradora de LAS YULAS.'
+    );
   }
+
   return session.user;
 }
+
+export async function cloudChangePassword(currentPassword, newPassword) {
+  const session = await validSession();
+
+  if (!session?.access_token || !session?.user?.id) {
+    throw new Error('Tu sesión expiró. Inicia sesión nuevamente.');
+  }
+
+  if (!(await cloudIsAdmin())) {
+    throw new Error('Tu cuenta no está autorizada como administradora.');
+  }
+
+  const email = session.user.email;
+
+  if (!email) {
+    throw new Error('No se pudo verificar el correo de la cuenta.');
+  }
+
+  // Verificar la contraseña actual con Supabase Authentication.
+  const verified = await api('/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    body: JSON.stringify({
+      email,
+      password: currentPassword
+    })
+  });
+
+  if (verified.user?.id !== session.user.id) {
+    throw new Error('No se pudo verificar la cuenta actual.');
+  }
+
+  // Actualizar la contraseña real en Supabase.
+  await api('/auth/v1/user', {
+    method: 'PUT',
+    body: JSON.stringify({
+      password: newPassword
+    })
+  }, session.access_token);
+
+  return true;
+}
+
+
 export async function cloudIsAdmin() {
   const session = await validSession();
   if (!session?.user?.id) return false;
