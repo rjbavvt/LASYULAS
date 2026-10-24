@@ -7,6 +7,7 @@
  * ========================================================================= */
 
 import { menuConfig as DEFAULT_CONFIG } from "./data.js";
+import { cloudIsConfigured, cloudSignIn, cloudSignOut, cloudFetchConfig, cloudSaveConfig, cloudIsAdmin, cloudSettings } from "./cloud.js";
 
 /* ----------------------------------------------------------------------
  * 0. Utilidades generales
@@ -222,10 +223,16 @@ async function idbClearAll() {
    - URLs http(s)/data/relative -> se devuelven tal cual.
    - "idb://..." -> se recupera el blob desde IndexedDB y se crea objectURL. */
 const _objectURLs = new Map();
+function optimizeCloudinaryURL(url) {
+  if (typeof url !== "string" || !url.includes("res.cloudinary.com/") || !url.includes("/image/upload/")) return url;
+  // Transformación de entrega (no cambia la URL guardada en el producto): formato automático y calidad adaptativa.
+  return url.replace("/image/upload/", "/image/upload/f_auto,q_auto/");
+}
+
 async function resolveImageURL(ref) {
   if (!ref) return null;
   if (typeof ref !== "string") return null;
-  if (!ref.startsWith(IDB_PREFIX)) return ref;
+  if (!ref.startsWith(IDB_PREFIX)) return optimizeCloudinaryURL(ref);
   const id = ref.slice(IDB_PREFIX.length);
   if (_objectURLs.has(id)) return _objectURLs.get(id);
   try {
@@ -271,9 +278,30 @@ function loadConfig() {
   }
 }
 
+let cloudSaveTimer = null;
+let cloudSaveRevision = 0;
+function queueCloudSave(cfg) {
+  if (!cloudIsConfigured()) return;
+  const snapshot = structuredClone(cfg);
+  const revision = ++cloudSaveRevision;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(async () => {
+    try {
+      // No intentar escribir desde visitantes públicos o durante una migración inicial.
+      if (!(await cloudIsAdmin())) return;
+      await cloudSaveConfig(snapshot);
+      if (revision === cloudSaveRevision) toast("Cambios sincronizados en la nube", "success", 2200);
+    } catch (e) {
+      console.error("No se pudo sincronizar con Supabase:", e);
+      if (revision === cloudSaveRevision) toast(`Guardado localmente; no se sincronizó: ${e.message}`, "error", 5000);
+    }
+  }, 500);
+}
+
 function saveConfig(cfg) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg));
+    queueCloudSave(cfg);
     return true;
   } catch (e) {
     console.error("Error guardando configuración:", e);
@@ -595,6 +623,9 @@ function openAuthModal(mode, onSubmit) {
 
   // Limpiar
   $("#authPassword").value = "";
+  if ($("#authEmail")) $("#authEmail").value = "";
+  const emailField = $("#authEmailField");
+  if (emailField) emailField.hidden = !(mode === "login" && cloudIsConfigured());
   $("#authNewPassword").value = "";
   $("#authNewPasswordConfirm").value = "";
   const err = $("#authError");
@@ -611,7 +642,7 @@ function openAuthModal(mode, onSubmit) {
     submitBtn.textContent = "Crear y entrar";
   } else {
     title.textContent = "Acceso restringido";
-    subtitle.textContent = "Introduce la contraseña para editar el menú";
+    subtitle.textContent = cloudIsConfigured() ? "Accede con tu correo y contraseña de administrador" : "Introduce la contraseña para editar el menú";
     submitBtn.textContent = "Entrar";
   }
 
@@ -621,7 +652,7 @@ function openAuthModal(mode, onSubmit) {
 
   // Foco
   setTimeout(() => {
-    const focusTarget = mode === "create" ? $("#authNewPassword") : $("#authPassword");
+    const focusTarget = mode === "create" ? $("#authNewPassword") : (cloudIsConfigured() ? $("#authEmail") : $("#authPassword"));
     focusTarget?.focus();
   }, 50);
 }
@@ -657,6 +688,27 @@ function wireAuthModal() {
 /* Flujo principal: pedir contraseña (o crearla) antes de abrir el editor */
 async function requestEditorAccess() {
   const auth = state.editorAuth || {};
+
+  // En producción, la autenticación compartida sustituye la contraseña local.
+  if (cloudIsConfigured()) {
+    if (await cloudIsAdmin()) { openEditor(); return; }
+    openAuthModal("login", async () => {
+      const email = $("#authEmail").value.trim();
+      const password = $("#authPassword").value;
+      if (!email || !password) { showAuthError("Introduce el correo y la contraseña de tu cuenta autorizada."); return; }
+      try {
+        await cloudSignIn(email, password);
+        closeAuthModal();
+        toast("Acceso autorizado", "success");
+        openEditor();
+      } catch (e) {
+        showAuthError(e.message || "No se pudo iniciar sesión.");
+        $("#authPassword").value = "";
+        $("#authPassword")?.focus();
+      }
+    });
+    return;
+  }
 
   // Auth deshabilitada: entrar directo
   if (auth.enabled === false) {
@@ -734,6 +786,9 @@ function openChangePasswordDialog() {
 
   // Limpiar
   $("#authPassword").value = "";
+  if ($("#authEmail")) $("#authEmail").value = "";
+  const emailField = $("#authEmailField");
+  if (emailField) emailField.hidden = !(mode === "login" && cloudIsConfigured());
   $("#authNewPassword").value = "";
   $("#authNewPasswordConfirm").value = "";
   const err = $("#authError");
@@ -792,6 +847,8 @@ const editor = {
 
 function openEditor() {
   editor.panel = $("#editorPanel");
+  const logoutButton = $("#editorLogout");
+  if (logoutButton) logoutButton.hidden = !cloudIsConfigured();
   editor.panel.classList.add("is-open");
   editor.panel.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-editing");
@@ -1665,6 +1722,16 @@ function buildDataTab() {
   const sec = $('[data-section="data"]');
   sec.innerHTML = "";
 
+  if (cloudIsConfigured()) {
+    sec.append(el("h3", { style: { margin: "0 0 8px", fontSize: "14px", color: "var(--ly-text-muted)", letterSpacing: ".06em", textTransform: "uppercase" } }, "Acceso compartido"));
+    sec.append(el("div", { class: "editor__item" }, [
+      el("div", { class: "editor__item-head" }, [el("span", { class: "editor__item-title" }, "🔐 Autenticación administrada por Supabase")]),
+      el("p", { class: "editor__note" }, "Solo las cuentas añadidas a la tabla menu_admins pueden editar y sincronizar el menú. Para agregar o retirar administradores, gestiona sus usuarios en Supabase Authentication y su membresía en la tabla menu_admins.")
+    ]));
+    const signOutBtn = el("button", { class: "editor__btn editor__btn--ghost", type: "button", style: { marginTop: "8px" } }, "Cerrar sesión de administrador");
+    signOutBtn.addEventListener("click", async () => { await cloudSignOut(); closeEditor(); toast("Sesión cerrada", "info"); });
+    sec.append(signOutBtn);
+  } else {
   // ---------- Seguridad del editor ----------
   const auth = state.editorAuth || {};
   sec.append(el("h3", { style: { margin: "0 0 8px", fontSize: "14px", color: "var(--ly-text-muted)", letterSpacing: ".06em", textTransform: "uppercase" } }, "Seguridad del editor"));
@@ -1727,6 +1794,8 @@ function buildDataTab() {
 
   // ---------- Configuración JSON ----------
   sec.append(el("h3", { style: { margin: "0 0 8px", fontSize: "14px", color: "var(--ly-text-muted)", letterSpacing: ".06em", textTransform: "uppercase" } }, "Configuración JSON"));
+
+  }
 
   // Exportar
   const exportBtn = el("button", { class: "editor__btn editor__btn--primary", type: "button" }, "⬇ Exportar JSON");
@@ -1849,6 +1918,11 @@ function wireEditor() {
   });
 
   $$("[data-editor-close]").forEach((n) => n.addEventListener("click", closeEditor));
+  $("#editorLogout")?.addEventListener("click", async () => {
+    await cloudSignOut();
+    closeEditor();
+    toast("Sesión cerrada", "info");
+  });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && editor.isOpen) closeEditor();
   });
@@ -1863,7 +1937,7 @@ function wireEditor() {
       const ok = saveConfig(state);
       if (ok) {
         renderApp();
-        toast("Cambios guardados", "success");
+        toast(cloudIsConfigured() ? "Guardado local; sincronizando…" : "Cambios guardados en este navegador", "success");
       }
     });
   }
@@ -2089,11 +2163,18 @@ function dedupCategories(cats) {
  * ---------------------------------------------------------------------- */
 
 async function init() {
-  // Cargar configuración guardada (si existe) o usar default
-  const saved = loadConfig();
+  // En modo compartido, la configuración remota es la fuente de verdad.
+  let remoteSaved = null;
+  if (cloudIsConfigured()) {
+    try { remoteSaved = await cloudFetchConfig(); }
+    catch (e) { console.warn("No se pudo leer la configuración remota; se usará la copia local:", e); }
+  }
+  const saved = remoteSaved || loadConfig();
   // Migración idempotente: añade categorías/productos nuevos sin duplicar
   // y fusiona categorías duplicadas por título.
   state = migrateConfig(saved, structuredClone(DEFAULT_CONFIG));
+  // Mantener copia local para carga rápida y tolerancia a desconexiones.
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.warn("No se pudo actualizar caché local:", e); }
 
   // Si la migración fusionó duplicados, persistir el resultado para que
   // no vuelvan a aparecer en la próxima carga.
@@ -2122,6 +2203,22 @@ async function init() {
     },
     true
   );
+
+  // Refresca el menú público periódicamente. No pisa el editor mientras se está usando.
+  if (cloudIsConfigured()) {
+    const interval = Math.max(10000, Number(cloudSettings().pollIntervalMs) || 20000);
+    setInterval(async () => {
+      if (editor.isOpen || document.visibilityState === "hidden") return;
+      try {
+        const remote = await cloudFetchConfig();
+        if (!remote || JSON.stringify(remote) === JSON.stringify(state)) return;
+        state = mergeDefaults(remote, structuredClone(DEFAULT_CONFIG));
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+        applyTheme(state);
+        await renderApp();
+      } catch (e) { console.warn("No se pudo actualizar el menú remoto:", e); }
+    }, interval);
+  }
 }
 
 function mergeDefaults(saved, defaults) {
