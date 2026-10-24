@@ -497,6 +497,36 @@ body.is-editing { overflow: hidden; }
   animation: lySlideUp .25s ease;
 }
 
+/* Botón "X" para cerrar el modal de autenticación (esquina superior derecha) */
+.auth__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--ly-divider);
+  border-radius: 50%;
+  color: var(--ly-text-muted);
+  cursor: pointer;
+  transition: background var(--ly-transition), color var(--ly-transition), border-color var(--ly-transition);
+  z-index: 2;
+  padding: 0;
+}
+.auth__close:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--ly-text);
+  border-color: var(--ly-text-subtle);
+}
+.auth__close:focus-visible {
+  outline: none;
+  border-color: var(--ly-accent);
+  box-shadow: 0 0 0 3px var(--ly-accent-soft);
+}
+
 @keyframes lySlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 .auth__header { text-align: center; margin-bottom: 18px; }
