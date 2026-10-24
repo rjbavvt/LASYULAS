@@ -8,11 +8,11 @@ Menú digital interactivo para **LAS YULAS** — hot dogs al carbón con salsas 
 
 ## 👤 Autor
 
-**Desarrollado por**: Rjbavtt | YouKnow.
+**Desarrollado por**: Rjbavtt, YouKnow.
 **Instagram**: [@rjbavvt](https://instagram.com/rjbavvt)
 **Soporte técnico**: jorg3ribavt@gmail.com
 
-© 2026 Jorge Eliecer Ribaut Villadiego. Todos los derechos reservados.
+© 2026 Rjbavtt, YouKnow. Todos los derechos reservados.
 
 Para soporte, cambios o nuevos proyectos de menú digital, contactar al correo arriba indicado.
 
