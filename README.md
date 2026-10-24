@@ -1,97 +1,123 @@
-# LAS YULAS · Menú digital para GitHub Pages
+# LAS YULAS · Menú Digital
 
-Esta versión conserva el editor existente, la integración con Cloudinary y la tipografía Outfit. Añade una capa opcional de sincronización compartida con Supabase y mejoras táctiles para el editor en móviles. GitHub Pages continúa alojando la parte web estática.
+Menú digital interactivo para **LAS YULAS** — hot dogs al carbón con salsas de la casa. App web estática publicada en GitHub Pages, con sincronización multi-administrador vía Supabase y almacenamiento de imágenes en Cloudinary.
 
-## Estructura
+🔗 **Demo en producción**: [https://rjbavvt.github.io/LASYULAS/](https://rjbavvt.github.io/LASYULAS/)
 
-```text
-/
-├── index.html
-├── .nojekyll
-├── README-GITHUB-PAGES.md
-├── css/styles.css
-├── js/
-│   ├── app.js
-│   ├── data.js
-│   ├── cloud.js
-│   └── cloud-config.js
-├── sql/supabase-setup.sql
-└── assets/                 # copiar desde el proyecto original
-    ├── logo.png
-    ├── banner.jpg
-    └── favicon.ico
+---
+
+## 👤 Autor
+
+**Desarrollado por**: Jorge Eliecer Ribaut Villadiego
+**Instagram**: [@rjbavvt](https://instagram.com/rjbavvt)
+**Soporte técnico**: jorg3ribavt@gmail.com
+
+© 2026 Jorge Eliecer Ribaut Villadiego. Todos los derechos reservados.
+
+Para soporte, cambios o nuevos proyectos de menú digital, contactar al correo arriba indicado.
+
+---
+
+## 🎯 Características
+
+- **Menú público** responsive (móvil y escritorio) con categorías, productos, precios, descripciones e imágenes.
+- **Editor visual** integrado — sin necesidad de tocar código para actualizar precios, textos o fotos.
+- **Multi-administrador** con autenticación real en Supabase — varias cuentas pueden editar el menú.
+- **Sincronización automática** entre dispositivos (sondeo cada 20 s).
+- **Cambio de contraseña** desde el propio editor (modifica la contraseña real en Supabase).
+- **Subida de imágenes** a Cloudinary con URL pública compartida entre dispositivos.
+- **Importar/Exportar JSON** para backup o migración manual.
+- **Tipografía Outfit** y paleta oscura con acento rojo, optimizada para comida callejera.
+- **Cero costos de hosting** — GitHub Pages + capa gratuita de Supabase + Cloudinary.
+
+---
+
+## 🛠 Stack técnico
+
+| Capa | Tecnología |
+|---|---|
+| Frontend | HTML5, CSS3, JavaScript (ES Modules) |
+| Hosting | GitHub Pages (estático, con `.nojekyll`) |
+| Autenticación | Supabase Auth (correo + contraseña) |
+| Base de datos | Supabase Postgres + RLS |
+| Imágenes | Cloudinary (upload preset unsigned) |
+| Tipografía | Outfit (Google Fonts) |
+
+---
+
+## 📁 Estructura del repositorio
+
+```
+LASYULAS/
+├── index.html                  · Estructura HTML + modales
+├── app.js                       · Render + editor + auth
+├── cloud.js                     · Capa de Supabase REST
+├── cloud-config.js              · URL + anon key (públicas)
+├── data.js                      · Configuración y contenido del menú
+├── styles.css                   · Estilos y responsive
+├── favicon.ico
+├── logo_lasyulas.png
+├── supabase-setup.sql           · SQL para crear tablas y políticas
+├── .nojekyll                    · Desactiva Jekyll en GitHub Pages
+├── README.md                    · Este archivo
+└── README-GITHUB-PAGES.md       · Guía de publicación detallada
 ```
 
-## 1. Publicación básica en GitHub Pages
+---
 
-1. Copia el contenido de esta carpeta a la raíz del repositorio, sin anidar la carpeta `lasyulas-github-pages`.
-2. En GitHub abre **Settings → Pages → Deploy from a branch**, selecciona la rama principal y `/(root)`.
-3. Conserva los nombres de archivo y las mayúsculas/minúsculas.
-4. La carpeta `assets/` no venía en los archivos entregados. Copia la carpeta original para que se carguen el logo, banner y favicon.
+## 🚀 Puesta en producción (resumen)
 
-La sincronización compartida queda desactivada hasta completar el paso 2 de abajo; mientras tanto, el sitio conserva la persistencia local anterior.
+1. Subir todos los archivos a la rama `main` del repositorio GitHub.
+2. Activar **Settings → Pages → Deploy from branch** (`main` / `/(root)`).
+3. Crear proyecto en [Supabase](https://supabase.com/), copiar Project URL y anon key en `cloud-config.js`.
+4. Ejecutar `supabase-setup.sql` en Supabase SQL Editor.
+5. Crear usuarios en **Authentication → Users** y registrar sus UUID en `menu_admins`.
+6. Configurar Cloudinary (cloudName + uploadPreset en `data.js`).
 
-## 2. Activar menú compartido y varios administradores
+Pasos detallados en `README-GITHUB-PAGES.md`.
 
-### Crear proyecto y credenciales
+---
 
-1. Crea un proyecto en Supabase.
-2. Abre **Project Settings → API** y copia la Project URL y la clave publicable (`anon`/publishable).
-3. Edita `js/cloud-config.js` y reemplaza `https://TU-PROYECTO.supabase.co` y `TU-CLAVE-PUBLICABLE-ANON` por los valores reales.
-4. Nunca coloques una clave `service_role` o secreta en archivos del frontend ni en GitHub.
+## 🔐 Seguridad
 
-### Crear tablas y permisos
+- **No se publican claves privadas** en el frontend. La `anon key` de Supabase en `cloud-config.js` es segura para el cliente porque las políticas RLS bloquean escrituras no autorizadas.
+- La `service_role` key de Supabase **nunca** se incluye en el código del navegador.
+- Cloudinary usa upload preset *unsigned*, sin API secret en el frontend.
+- Las contraseñas se gestionan en Supabase Auth (estándar de la industria, con hash bcrypt interno).
 
-1. En Supabase abre **SQL Editor**.
-2. Ejecuta el archivo `sql/supabase-setup.sql` completo.
-3. Las políticas permiten lectura pública del menú, pero solo los usuarios autenticados incluidos en `menu_admins` pueden escribir la configuración. Los visitantes no reciben permisos de escritura.
+---
 
-### Autorizar cada administrador
+## 📝 Uso del editor (para administradores del negocio)
 
-Para cada persona:
+1. Abrir `https://rjbavvt.github.io/LASYULAS/`
+2. Pulsar botón **"✎ Editar menú"** (abajo a la derecha).
+3. Introducir correo + contraseña de administrador.
+4. Editar precios, descripciones, imágenes, categorías o productos.
+5. Pulsar **Guardar** → los cambios se sincronizan con todos los dispositivos en hasta 20 s.
+6. Para cambiar la contraseña: pestaña **Datos → 🔑 Cambiar contraseña**.
 
-1. En **Authentication → Users**, crea/invita la cuenta con su correo y contraseña. Asegúrate de que la cuenta esté confirmada y pueda iniciar sesión.
-2. Copia su UUID de usuario.
-3. En SQL Editor ejecuta una sentencia por cada usuario, sustituyendo el UUID real:
+---
 
-```sql
-insert into public.menu_admins (user_id)
-values ('UUID-REAL-DEL-USUARIO');
-```
+## ⚠️ Limitaciones conocidas
 
-Para revocar el acceso, elimina su fila de `public.menu_admins`. No habilites la inscripción pública de administradores.
+- La sincronización es por sondeo cada 20 s, no es tiempo real instantáneo.
+- No hay edición simultánea con resolución de conflictos: si dos administradores guardan al mismo tiempo, el último sobrescribe.
+- GitHub Pages puede tardar 1-2 minutos en refrescar tras un nuevo commit (caché del CDN).
+- Las imágenes guardadas en IndexedDB (modo local sin nube) **no se comparten** entre navegadores — para compartirlas deben subirse a Cloudinary desde el editor.
 
-### Cómo funciona tras activarlo
+---
 
-- El menú público lee la configuración compartida desde Supabase.
-- Los administradores entran con correo y contraseña; no se usa la contraseña local antigua como mecanismo de seguridad.
-- Al guardar, la aplicación conserva una copia local y sincroniza el menú con Supabase.
-- Los otros navegadores consultan actualizaciones periódicamente (intervalo inicial de 20 segundos). No es una conexión realtime instantánea.
-- Las imágenes continúan subiendo a Cloudinary con la configuración que ya existía en `data.js`. La base de datos guarda las URL, no los archivos de imagen.
-- Si Supabase no está configurado o hay un fallo de red, la app conserva la copia local y muestra un aviso; en ese caso el cambio no queda compartido hasta que se corrija la conexión y se guarde de nuevo.
+## 📜 Licencia
 
-## 3. Imágenes y Cloudinary
+Código y diseño © 2026 **Jorge Eliecer Ribaut Villadiego**.
 
-La configuración existente de Cloudinary se conserva en `js/data.js` (`cloudName`, `uploadPreset` y `folder`). Verifica en tu cuenta de Cloudinary que el preset unsigned `lasyulas_uploads` esté activo y limitado según las opciones disponibles. Una clave secreta de Cloudinary nunca debe incluirse en el navegador.
+Uso comercial exclusivo para **LAS YULAS**. Para licenciar esta plantilla para otros negocios, contactar a jorg3ribavt@gmail.com.
 
-Las imágenes que se guardaron antiguamente solo en IndexedDB (`idb://...`) siguen estando disponibles únicamente en el navegador original. Para compartirlas, vuelve a subirlas a Cloudinary desde el editor y guarda el producto para que quede almacenada una URL pública.
+---
 
-## 4. Editor móvil
+## 📞 Contacto
 
-Se conservan las pestañas y las herramientas del editor; los ajustes CSS mejoran el tamaño de los controles, el ajuste de formularios, el espacio en pantalla, la selección de imágenes y las áreas táctiles en móviles y tablets.
-
-## 5. Pruebas antes de darlo por producción
-
-- Prueba el menú público sin iniciar sesión.
-- Prueba el inicio de sesión con un administrador autorizado y con un usuario no autorizado.
-- Cambia un precio y confirma que se sincronice; abre el menú en otro navegador y espera hasta 20 segundos.
-- Sube una imagen a Cloudinary y confirma que aparece en otro dispositivo.
-- Prueba el editor a 360 px de ancho y en computador.
-- No compartas capturas que muestren claves privadas; la clave publicable de Supabase está diseñada para el cliente y la seguridad depende de las políticas RLS.
-
-## Limitaciones conocidas
-
-- GitHub Pages sigue siendo estático; Supabase es el servicio externo que aporta base de datos y autenticación.
-- Esta versión no incluye edición colaborativa simultánea con resolución de conflictos: si dos administradores guardan cambios distintos al mismo tiempo, el último guardado puede reemplazar al anterior.
-- El menú público se actualiza por sondeo periódico, no mediante Supabase Realtime.
-- Los archivos originales no incluían la carpeta `assets/`, por lo que debes añadirla antes de publicar.
+- **Soporte técnico**: jorg3ribavt@gmail.com
+- **Instagram**: [@rjbavvt](https://instagram.com/rjbavvt)
+- **Repositorio**: [github.com/rjbavvt/LASYULAS](https://github.com/rjbavvt/LASYULAS)
+- **Sitio público**: [rjbavvt.github.io/LASYULAS](https://rjbavvt.github.io/LASYULAS/)
