@@ -786,36 +786,36 @@ function openChangePasswordDialog() {
   subtitle.textContent = "Introduce la contraseña actual y la nueva.";
   submitBtn.textContent = "Actualizar";
 
-// Mostrar los campos de contraseña actual, nueva y confirmación.
-$$("[data-auth-mode]").forEach((f) => {
-  f.hidden = false;
 
-  f.querySelectorAll("input, select, textarea").forEach((control) => {
-    control.disabled = false;
+  // Mostrar los campos de contraseña actual, nueva y confirmación.
+  $$("[data-auth-mode]").forEach((f) => {
+    f.hidden = false;
+
+    f.querySelectorAll("input, select, textarea").forEach((control) => {
+      control.disabled = false;
+    });
   });
-});
 
-const emailField = $("#authEmailField");
+  const loginLabel = document.querySelector('[for="authPassword"]');
 
-if (emailField) {
-  emailField.hidden = true;
+  if (loginLabel) {
+    loginLabel.textContent = "Contraseña actual";
+  }
 
-  emailField.querySelectorAll("input, select, textarea").forEach((control) => {
-    control.disabled = true;
-  });
-}
+  const emailField = $("#authEmailField");
 
-const loginLabel = document.querySelector('[for="authPassword"]');
+  if (emailField) {
+    emailField.hidden = true;
 
-if (loginLabel) {
-  loginLabel.textContent = "Contraseña actual";
-}
+    emailField.querySelectorAll("input, select, textarea").forEach((control) => {
+      control.disabled = true;
+    });
+  }
+
 
   // Limpiar
   $("#authPassword").value = "";
   if ($("#authEmail")) $("#authEmail").value = "";
-  const emailField = $("#authEmailField");
-  if (emailField) emailField.hidden = !(mode === "login" && cloudIsConfigured());
   $("#authNewPassword").value = "";
   $("#authNewPasswordConfirm").value = "";
   const err = $("#authError");
