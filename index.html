@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="description" content="Menú digital de LAS YULAS - Hot dogs al carbón con salsas de la casa" />
+  <meta name="theme-color" content="#000000" />
+  <title>LAS YULAS · Menú Digital</title>
+
+  <!-- Tipografías (cargadas desde Google Fonts; reemplazables desde data.js) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Favicon: .ico para máxima compatibilidad + PNG para navegadores modernos -->
+  <!-- Los archivos están en la raíz del repositorio (estructura plana). -->
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <link rel="icon" type="image/png" href="./logo_lasyulas.png" />
+  <link rel="apple-touch-icon" href="./logo_lasyulas.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- ====== Contenido inyectado dinámicamente por app.js ====== -->
+  <main id="app" class="app" aria-live="polite">
+    <p class="app-loading">Cargando menú…</p>
+  </main>
+
+  <!-- Botón discreto de edición -->
+  <button id="editToggleBtn" class="edit-toggle" type="button" aria-label="Editar menú" hidden>
+    <span aria-hidden="true">✎</span> Editar menú
+  </button>
+
+  <!-- ====== Modal de autenticación del editor ====== -->
+  <div id="authModal" class="auth" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="auth__backdrop" data-auth-close></div>
+    <div class="auth__panel">
+      <header class="auth__header">
+        <h2 id="authTitle" class="auth__title">Acceso restringido</h2>
+        <p class="auth__subtitle">Introduce la contraseña para editar el menú</p>
+      </header>
+      <form id="authForm" class="auth__form" autocomplete="off">
+        <div class="auth__field" data-auth-mode="login" id="authEmailField" hidden>
+          <label class="auth__label" for="authEmail">Correo del administrador</label>
+          <input id="authEmail" class="auth__input" type="email" autocomplete="username" placeholder="admin@tudominio.com" />
+        </div>
+        <div class="auth__field" data-auth-mode="login">
+          <label class="auth__label" for="authPassword">Contraseña</label>
+          <input id="authPassword" class="auth__input" type="password" required autocomplete="current-password" placeholder="••••••••" />
+        </div>
+        <div class="auth__field" data-auth-mode="create" hidden>
+          <label class="auth__label" for="authNewPassword">Nueva contraseña</label>
+          <input id="authNewPassword" class="auth__input" type="password" required minlength="4" autocomplete="new-password" placeholder="Mínimo 4 caracteres" />
+        </div>
+        <div class="auth__field" data-auth-mode="create" hidden>
+          <label class="auth__label" for="authNewPasswordConfirm">Confirmar contraseña</label>
+          <input id="authNewPasswordConfirm" class="auth__input" type="password" required minlength="4" autocomplete="new-password" placeholder="Repite la contraseña" />
+        </div>
+        <p id="authError" class="auth__error" hidden></p>
+        <div class="auth__actions">
+          <button type="button" class="editor__btn editor__btn--ghost" data-auth-close>Cancelar</button>
+          <button type="submit" class="editor__btn editor__btn--primary" id="authSubmit">Entrar</button>
+        </div>
+      </form>
+      <footer class="auth__footer">
+        <span class="auth__note">Sesión activa durante 30 min en este navegador.</span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====== Panel de edición (modal) ====== -->
+  <aside id="editorPanel" class="editor" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <div class="editor__backdrop" data-editor-close></div>
+    <div class="editor__panel">
+      <header class="editor__header">
+        <h2 id="editorTitle" class="editor__title">Editar menú</h2>
+        <div class="editor__actions">
+          <button type="button" class="editor__btn editor__btn--ghost" id="editorLogout" hidden>Cerrar sesión</button>
+          <button type="button" class="editor__btn editor__btn--ghost" data-editor-close>Cerrar</button>
+          <button type="button" class="editor__btn editor__btn--primary" id="editorSave">Guardar</button>
+        </div>
+      </header>
+
+      <nav class="editor__tabs" role="tablist">
+        <button type="button" class="editor__tab is-active" role="tab" data-tab="general">General</button>
+        <button type="button" class="editor__tab" role="tab" data-tab="theme">Estilos</button>
+        <button type="button" class="editor__tab" role="tab" data-tab="categories">Categorías</button>
+        <button type="button" class="editor__tab" role="tab" data-tab="products">Productos</button>
+        <button type="button" class="editor__tab" role="tab" data-tab="data">Datos</button>
+      </nav>
+
+      <div class="editor__body">
+        <!-- Tab: General -->
+        <section class="editor__section is-active" data-section="general">
+          <!-- Generado dinámicamente -->
+        </section>
+
+        <!-- Tab: Theme -->
+        <section class="editor__section" data-section="theme"></section>
+
+        <!-- Tab: Categorías -->
+        <section class="editor__section" data-section="categories"></section>
+
+        <!-- Tab: Productos -->
+        <section class="editor__section" data-section="products"></section>
+
+        <!-- Tab: Datos (importar/exportar/reset) -->
+        <section class="editor__section" data-section="data"></section>
+      </div>
+
+      <footer class="editor__footer">
+        <span class="editor__note">
+          Los cambios se guardan automáticamente. Con la sincronización en la nube configurada, los cambios se comparten entre dispositivos.
+        </span>
+      </footer>
+    </div>
+  </aside>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Scripts como módulos ES (requiere servidor local, no file://) -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
