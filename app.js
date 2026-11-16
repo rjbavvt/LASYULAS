@@ -458,7 +458,7 @@ async function renderBanner(cfg) {
  * real, no se renderiza el botón.
  */
 function getWhatsAppNumber(cfg) {
-  const PLACEHOLDER = "573000000000"; // placeholder original de data.js
+  const PLACEHOLDER = "573002237254"; // placeholder original de data.js
   const candidates = [];
   // 1) Teléfono de contacto (editable desde el panel, sincroniza con la nube)
   const phone = cfg?.footer?.contactPhone;
