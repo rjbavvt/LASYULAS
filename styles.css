@@ -356,6 +356,34 @@ a { color: inherit; }
   text-decoration: line-through;
 }
 
+/* ===== Botón "Ordenar" por WhatsApp (en cada producto) ===== */
+.ly-card__order {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 2px;
+  padding: 12px 14px;
+  background: #25D366;          /* verde WhatsApp */
+  color: #ffffff;               /* texto e icono en blanco */
+  border: none;                 /* plano, sin borde */
+  border-radius: 10px;          /* esquinas redondeadas suaves */
+  font-family: var(--ly-body-font);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0;            /* sin espaciado extra */
+  text-transform: none;         /* "Ordenar", no "ORDENAR" */
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s ease, transform .05s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.ly-card__order:hover { background: #1da851; }
+.ly-card__order:active { background: #128c44; transform: translateY(1px); }
+.ly-card__order:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+.ly-card__order svg { width: 22px; height: 22px; flex: none; }
+
 .ly-card__variants {
   display: flex;
   flex-wrap: wrap;
@@ -433,55 +461,6 @@ a { color: inherit; }
 }
 
 /* --------- Botón de edición --------- */
-
-/* ======================================================================
- *  AISLAMIENTO DEL EDITOR / AUTH / TOAST
- *  Las variables --ly-* se re-declaran aquí con los valores por defecto
- *  de LAS YULAS para que los cambios de estilo hechos desde el editor
- *  (pestaña "Estilos": colores, tipografía, tamaños) NO afecten a la
- *  interfaz del propio editor, ni al modal de acceso, ni al botón
- *  "Editar menú", ni a los toasts. Solo el contenido del menú
- *  (#app y sus descendientes) refleja el tema elegido.
- *
- *  Funciona porque las custom properties se heredan desde el ancestro
- *  más cercano que las declara: al fijarlas en .editor/.auth/etc.,
- *  estos elementos y todo su contenido usan los valores fijos en vez
- *  de los que applyTheme() escribe en :root.
- * ====================================================================== */
-.edit-toggle,
-.toast,
-.editor,
-.auth {
-  --ly-bg: #000000;
-  --ly-surface: #111111;
-  --ly-surface-alt: #1A1A1A;
-  --ly-text: #FFFFFF;
-  --ly-text-muted: #D0D0D0;
-  --ly-text-subtle: #9A9A9A;
-  --ly-accent: #E51B16;
-  --ly-accent-soft: rgba(229, 27, 22, 0.18);
-  --ly-success: #2ECC71;
-  --ly-warning: #F1C40F;
-  --ly-divider: rgba(255,255,255,0.08);
-  --ly-heading-font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
-  --ly-body-font: 'Outfit', 'Helvetica Neue', Arial, sans-serif;
-  --ly-heading-weight: 800;
-  --ly-heading-transform: uppercase;
-  --ly-base-size: 16px;
-  --ly-transition: 200ms cubic-bezier(.4,.0,.2,1);
-  /* Layout fijado para que el editor no cambie de forma si el usuario
- *     toca columnas/ancho/radios en el menú. */
-  --ly-max-width: 1200px;
-  --ly-content-padding: 24px;
-  --ly-grid-gap: 28px;
-  --ly-card-gap: 18px;
-  --ly-image-ratio: 1 / 1;
-  --ly-image-radius: 18px;
-  --ly-card-radius: 22px;
-  --ly-banner-height: 44vh;
-  --ly-banner-height-mobile: 32vh;
-}
-
 .edit-toggle {
   position: fixed;
   bottom: 20px;
