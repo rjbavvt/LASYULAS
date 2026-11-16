@@ -161,10 +161,10 @@ export const menuConfig = {
     copyright: "© 2026 Las Yulas · Menú digital implementado por Jorge Eliecer Ribaut Villadiego",
     social: [
       { label: "Instagram", url: "https://instagram.com/lasyulas", visible: true },
-      { label: "WhatsApp", url: "https://wa.me/573000000000", visible: true },
+      { label: "WhatsApp", url: "https://wa.me/573002237254", visible: true },
       { label: "Ubicación", url: "https://maps.google.com/?q=Las+Yulas", visible: false }
     ],
-    contactPhone: "+57 300 000 0000",
+    contactPhone: "+57 300 223 7254",
     contactAddress: "Calle 100 #50-25, Bogotá, Colombia",
     supportEmail: "jorg3ribavt@gmail.com",
     developerName: "Jorge Eliecer Ribaut Villadiego",
