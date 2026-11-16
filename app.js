@@ -445,23 +445,42 @@ async function renderBanner(cfg) {
  * Construye un enlace wa.me que abre WhatsApp con un mensaje
  * pre-escrito: "Hola, quiero ordenar <nombre del producto>".
  *
- * El número de destino se toma del enlace de WhatsApp configurado en
- * el pie de página (footer.social, entrada con label "WhatsApp") o,
- * como respaldo, del teléfono de contacto (footer.contactPhone).
- * Si no hay número configurado, no se renderiza el botón.
+ * El número de destino se toma, por este orden:
+ *   1) Del teléfono de contacto (footer.contactPhone) → es el campo
+ *      "Teléfono" del panel de edición (pestaña General → Footer) y
+ *      se sincroniza con la nube, así que es la fuente más fiable.
+ *      Acepta formatos con "+", espacios o guiones, p. ej.
+ *      "+57 300 2237254".
+ *   2) Del enlace de WhatsApp del pie de página (footer.social) como
+ *      respaldo.
+ * Se ignora el número placeholder que viene por defecto en data.js
+ * ("573000000000") para no usarlo por error. Si no hay ningún número
+ * real, no se renderiza el botón.
  */
 function getWhatsAppNumber(cfg) {
+  const PLACEHOLDER = "573000000000"; // placeholder original de data.js
+  const candidates = [];
+  // 1) Teléfono de contacto (editable desde el panel, sincroniza con la nube)
+  const phone = cfg?.footer?.contactPhone;
+  if (phone) candidates.push(String(phone).replace(/\D/g, ""));
+  // 2) Enlace de WhatsApp del pie de página (footer.social)
   const social = cfg?.footer?.social || [];
   const wa = social.find(
     (s) => s && (/whatsapp/i.test(s.label || "") || /wa\.me\/\d/i.test(s.url || ""))
   );
   if (wa && wa.url) {
     const m = wa.url.match(/wa\.me\/(\d+)/);
-    if (m && m[1]) return m[1];
+    if (m && m[1]) candidates.push(m[1]);
   }
-  const phone = cfg?.footer?.contactPhone;
-  if (phone) return String(phone).replace(/\D/g, "");
-  return "";
+  // Primer candidato que NO sea el placeholder y tenga >= 8 dígitos;
+  // si todos son placeholder, devuelve el primero (para no ocultar el botón).
+  const real = candidates.find((n) => n && n !== PLACEHOLDER && n.length >= 8);
+  let number = real || candidates[0] || "";
+  // Si es un móvil colombiano sin prefijo internacional (10 dígitos
+  // empezando por 3), le antepone el código de país 57. El negocio opera
+  // en Colombia; si algún día se usa fuera, ajustar este prefijo.
+  if (/^3\d{9}$/.test(number)) number = "57" + number;
+  return number;
 }
 
 function whatsappOrderUrl(product, cfg) {
